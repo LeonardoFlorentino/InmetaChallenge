@@ -1,5 +1,9 @@
 import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  DefaultTheme,
+  DarkTheme,
+} from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import OrderListScreen from "../screens/OrderListScreen/OrderListScreen";
 import OrderDetailScreen from "../screens/OrderDetailScreen/OrderDetailScreen";
@@ -7,26 +11,54 @@ import OrderFormScreen from "../screens/OrderFormScreen/OrderFormScreen";
 
 const Stack = createStackNavigator();
 
-const AppNavigator = () => (
-  <NavigationContainer>
-    <Stack.Navigator initialRouteName="OrderList">
-      <Stack.Screen
-        name="OrderList"
-        component={OrderListScreen}
-        options={{ title: "Orders" }}
-      />
-      <Stack.Screen
-        name="OrderDetail"
-        component={OrderDetailScreen}
-        options={{ title: "Order Details" }}
-      />
-      <Stack.Screen
-        name="OrderForm"
-        component={OrderFormScreen}
-        options={{ title: "Order Form" }}
-      />
-    </Stack.Navigator>
-  </NavigationContainer>
-);
+import { useTheme } from "../styles/ThemeProvider";
+
+const AppNavigator = () => {
+  const { theme, mode } = useTheme();
+  const navTheme = {
+    dark: mode === "dark",
+    colors: {
+      ...(mode === "dark" ? DarkTheme.colors : DefaultTheme.colors),
+      background: theme.background,
+      card: theme.background,
+      text: theme.title,
+      border: theme.border,
+      primary: theme.fab,
+    },
+    fonts: (mode === "dark" ? DarkTheme.fonts : DefaultTheme.fonts),
+  };
+  return (
+    <NavigationContainer theme={navTheme}>
+      <Stack.Navigator
+        initialRouteName="OrderList"
+        screenOptions={{
+          headerStyle: { backgroundColor: theme.background },
+          headerTitleStyle: {
+            fontWeight: "700",
+            fontSize: 20,
+            color: theme.title,
+          },
+          headerTintColor: theme.title,
+        }}
+      >
+        <Stack.Screen
+          name="OrderList"
+          component={OrderListScreen}
+          options={{ title: "Orders" }}
+        />
+        <Stack.Screen
+          name="OrderDetail"
+          component={OrderDetailScreen}
+          options={{ title: "Order Details" }}
+        />
+        <Stack.Screen
+          name="OrderForm"
+          component={OrderFormScreen}
+          options={{ title: "Order Form" }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
 
 export default AppNavigator;

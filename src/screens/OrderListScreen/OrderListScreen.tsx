@@ -5,13 +5,20 @@ import {
   FlatList,
   ActivityIndicator,
   StyleSheet,
+  TouchableOpacity,
+  Switch,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { getWorkOrders, WorkOrder } from "../../services/workOrderService";
+import { useTheme } from "../../styles/ThemeProvider";
+import { typography } from "../../styles/typography";
 
 const OrderListScreen = () => {
   const [orders, setOrders] = useState<WorkOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigation = useNavigation();
+  const { theme, mode, setMode } = useTheme();
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -27,9 +34,68 @@ const OrderListScreen = () => {
     fetchOrders();
   }, []);
 
+  const themedStyles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+      padding: 16,
+    },
+    item: {
+      backgroundColor: theme.card,
+      padding: 16,
+      marginBottom: 12,
+      borderRadius: 8,
+    },
+    title: {
+      ...typography.title,
+      color: theme.title,
+      marginBottom: 4,
+    },
+    text: {
+      ...typography.regular,
+      color: theme.text,
+    },
+    center: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    fab: {
+      position: "absolute",
+      right: 24,
+      bottom: 24,
+      backgroundColor: theme.fab,
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      alignItems: "center",
+      justifyContent: "center",
+      elevation: 6,
+      shadowColor: theme.shadow,
+      shadowOpacity: 0.2,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 2 },
+    },
+    fabText: {
+      color: theme.fabText,
+      fontSize: 32,
+      marginTop: -2,
+    },
+    toggleRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "flex-end",
+      marginBottom: 8,
+    },
+    toggleLabel: {
+      marginRight: 8,
+      color: theme.toggleLabel,
+    },
+  });
+
   if (loading) {
     return (
-      <View style={styles.center}>
+      <View style={themedStyles.center}>
         <ActivityIndicator size="large" />
       </View>
     );
@@ -37,52 +103,46 @@ const OrderListScreen = () => {
 
   if (error) {
     return (
-      <View style={styles.center}>
-        <Text>{error}</Text>
+      <View style={themedStyles.center}>
+        <Text style={themedStyles.text}>{error}</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View style={themedStyles.container}>
+      <View style={themedStyles.toggleRow}>
+        <Text style={themedStyles.toggleLabel}>Dark Mode</Text>
+        <Switch
+          value={mode === "dark"}
+          onValueChange={(v) => setMode(v ? "dark" : "light")}
+        />
+      </View>
       <FlatList
         data={orders}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.item}>
-            <Text style={styles.title}>{item.title}</Text>
-            <Text>Status: {item.status}</Text>
-            <Text>Assigned to: {item.assignedTo}</Text>
+          <View style={themedStyles.item}>
+            <Text style={themedStyles.title}>{item.title}</Text>
+            <Text style={themedStyles.text}>Status: {item.status}</Text>
+            <Text style={themedStyles.text}>
+              Assigned to: {item.assignedTo}
+            </Text>
           </View>
         )}
-        ListEmptyComponent={<Text>No work orders found.</Text>}
+        ListEmptyComponent={
+          <Text style={themedStyles.text}>No work orders found.</Text>
+        }
       />
+      <TouchableOpacity
+        style={themedStyles.fab}
+        onPress={() => navigation.navigate("OrderForm" as never)}
+        accessibilityLabel="Add Work Order"
+      >
+        <Text style={themedStyles.fabText}>+</Text>
+      </TouchableOpacity>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    padding: 16,
-  },
-  item: {
-    backgroundColor: "#f2f2f2",
-    padding: 16,
-    marginBottom: 12,
-    borderRadius: 8,
-  },
-  title: {
-    fontWeight: "bold",
-    fontSize: 16,
-    marginBottom: 4,
-  },
-  center: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
 
 export default OrderListScreen;
