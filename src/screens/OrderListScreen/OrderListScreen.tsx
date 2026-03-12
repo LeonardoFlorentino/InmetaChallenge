@@ -9,6 +9,12 @@ import {
   Switch,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+
+type RootStackParamList = {
+  OrderList: undefined;
+  OrderDetail: { order: any };
+  OrderForm: undefined;
+};
 import { getWorkOrders, WorkOrder } from "../../services/workOrderService";
 import { useTheme } from "../../styles/ThemeProvider";
 import { typography } from "../../styles/typography";
@@ -17,7 +23,7 @@ const OrderListScreen = () => {
   const [orders, setOrders] = useState<WorkOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const { theme, mode, setMode } = useTheme();
 
   useEffect(() => {
@@ -122,13 +128,16 @@ const OrderListScreen = () => {
         data={orders}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={themedStyles.item}>
+          <TouchableOpacity
+            style={themedStyles.item}
+            onPress={() => navigation.navigate("OrderDetail", { order: item })}
+          >
             <Text style={themedStyles.title}>{item.title}</Text>
             <Text style={themedStyles.text}>Status: {item.status}</Text>
             <Text style={themedStyles.text}>
               Assigned to: {item.assignedTo}
             </Text>
-          </View>
+          </TouchableOpacity>
         )}
         ListEmptyComponent={
           <Text style={themedStyles.text}>No work orders found.</Text>

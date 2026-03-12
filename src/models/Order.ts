@@ -12,6 +12,7 @@ export class Order extends Realm.Object<Order> {
   deletedAt?: string;
   completed!: boolean;
   deleted!: boolean;
+  synced!: boolean;
 
   static schema: ObjectSchema = {
     name: "Order",
@@ -28,6 +29,7 @@ export class Order extends Realm.Object<Order> {
       deletedAt: "string?",
       completed: "bool",
       deleted: "bool",
+      synced: { type: "bool", default: false },
     },
   };
 }
