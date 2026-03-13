@@ -1,3 +1,4 @@
+export type Theme = typeof lightTheme;
 export type ThemeType = "light" | "dark";
 
 export const lightTheme = {
@@ -12,6 +13,8 @@ export const lightTheme = {
   buttonText: "#fff",
   shadow: "#000",
   toggleLabel: "#181818",
+  inputBg: "#f7f7f7",
+  inputText: "#222",
 };
 
 export const darkTheme = {
@@ -26,4 +29,6 @@ export const darkTheme = {
   buttonText: "#fff",
   shadow: "#000",
   toggleLabel: "#fff",
+  inputBg: "#232323",
+  inputText: "#fff",
 };

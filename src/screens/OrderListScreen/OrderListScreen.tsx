@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
+import { FlatList, ActivityIndicator, Switch } from "react-native";
 import {
-  View,
-  Text,
-  FlatList,
-  ActivityIndicator,
-  StyleSheet,
-  TouchableOpacity,
-  Switch,
-} from "react-native";
+  Container,
+  Center,
+  Item,
+  Title,
+  TextStyled,
+  Fab,
+  FabText,
+  ToggleRow,
+  ToggleLabel
+} from "./OrderListScreen.styles";
 import { useNavigation } from "@react-navigation/native";
 
 type RootStackParamList = {
@@ -17,7 +20,7 @@ type RootStackParamList = {
 };
 import { getWorkOrders, WorkOrder } from "../../services/workOrderService";
 import { useTheme } from "../../styles/ThemeProvider";
-import { typography } from "../../styles/typography";
+
 
 const OrderListScreen = () => {
   const [orders, setOrders] = useState<WorkOrder[]>([]);
@@ -40,117 +43,48 @@ const OrderListScreen = () => {
     fetchOrders();
   }, []);
 
-  const themedStyles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: theme.background,
-      padding: 16,
-    },
-    item: {
-      backgroundColor: theme.card,
-      padding: 16,
-      marginBottom: 12,
-      borderRadius: 8,
-    },
-    title: {
-      ...typography.title,
-      color: theme.title,
-      marginBottom: 4,
-    },
-    text: {
-      ...typography.regular,
-      color: theme.text,
-    },
-    center: {
-      flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    fab: {
-      position: "absolute",
-      right: 24,
-      bottom: 24,
-      backgroundColor: theme.fab,
-      width: 56,
-      height: 56,
-      borderRadius: 28,
-      alignItems: "center",
-      justifyContent: "center",
-      elevation: 6,
-      shadowColor: theme.shadow,
-      shadowOpacity: 0.2,
-      shadowRadius: 8,
-      shadowOffset: { width: 0, height: 2 },
-    },
-    fabText: {
-      color: theme.fabText,
-      fontSize: 32,
-      marginTop: -2,
-    },
-    toggleRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "flex-end",
-      marginBottom: 8,
-    },
-    toggleLabel: {
-      marginRight: 8,
-      color: theme.toggleLabel,
-    },
-  });
 
   if (loading) {
     return (
-      <View style={themedStyles.center}>
+      <Center>
         <ActivityIndicator size="large" />
-      </View>
+      </Center>
     );
   }
 
   if (error) {
     return (
-      <View style={themedStyles.center}>
-        <Text style={themedStyles.text}>{error}</Text>
-      </View>
+      <Center>
+        <TextStyled>{error}</TextStyled>
+      </Center>
     );
   }
 
   return (
-    <View style={themedStyles.container}>
-      <View style={themedStyles.toggleRow}>
-        <Text style={themedStyles.toggleLabel}>Dark Mode</Text>
+    <Container>
+      <ToggleRow>
+        <ToggleLabel>Dark Mode</ToggleLabel>
         <Switch
           value={mode === "dark"}
           onValueChange={(v) => setMode(v ? "dark" : "light")}
         />
-      </View>
+      </ToggleRow>
       <FlatList
         data={orders}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            style={themedStyles.item}
-            onPress={() => navigation.navigate("OrderDetail", { order: item })}
-          >
-            <Text style={themedStyles.title}>{item.title}</Text>
-            <Text style={themedStyles.text}>Status: {item.status}</Text>
-            <Text style={themedStyles.text}>
-              Assigned to: {item.assignedTo}
-            </Text>
-          </TouchableOpacity>
+          <Item onPress={() => navigation.navigate("OrderDetail", { order: item })}>
+            <Title>{item.title}</Title>
+            <TextStyled>Status: {item.status}</TextStyled>
+            <TextStyled>Assigned to: {item.assignedTo}</TextStyled>
+          </Item>
         )}
-        ListEmptyComponent={
-          <Text style={themedStyles.text}>No work orders found.</Text>
-        }
+        ListEmptyComponent={<TextStyled>No work orders found.</TextStyled>}
       />
-      <TouchableOpacity
-        style={themedStyles.fab}
-        onPress={() => navigation.navigate("OrderForm" as never)}
-        accessibilityLabel="Add Work Order"
-      >
-        <Text style={themedStyles.fabText}>+</Text>
-      </TouchableOpacity>
-    </View>
+      <Fab onPress={() => navigation.navigate("OrderForm" as never)} accessibilityLabel="Add Work Order">
+        <FabText>+</FabText>
+      </Fab>
+    </Container>
   );
 };
 

@@ -1,9 +1,20 @@
 import React, { useEffect, useRef } from "react";
 import AppNavigator from "./src/navigation";
-import { ThemeProvider } from "./src/styles/ThemeProvider";
+import { ThemeProvider as CustomThemeProvider, useTheme } from "./src/styles/ThemeProvider";
+import { ThemeProvider as StyledThemeProvider } from "styled-components/native";
 import { useNetworkStatus } from "./src/hooks/useNetworkStatus";
 import { syncOrders } from "./src/services/sync";
 import { UserProvider } from "./src/store/UserContext";
+
+
+function AppContent() {
+  const { theme } = useTheme();
+  return (
+    <StyledThemeProvider theme={theme}>
+      <AppNavigator />
+    </StyledThemeProvider>
+  );
+}
 
 export default function App() {
   const isOnline = useNetworkStatus();
@@ -11,7 +22,6 @@ export default function App() {
 
   useEffect(() => {
     if (!wasOnline.current && isOnline) {
-      // Voltou a ficar online
       syncOrders();
     }
     wasOnline.current = isOnline;
@@ -19,9 +29,9 @@ export default function App() {
 
   return (
     <UserProvider>
-      <ThemeProvider initialMode="dark">
-        <AppNavigator />
-      </ThemeProvider>
+      <CustomThemeProvider initialMode="dark">
+        <AppContent />
+      </CustomThemeProvider>
     </UserProvider>
   );
 }

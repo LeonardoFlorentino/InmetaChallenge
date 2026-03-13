@@ -44,17 +44,17 @@ const AppNavigator = () => {
         <Stack.Screen
           name="OrderList"
           component={OrderListScreen}
-          options={{ title: "Orders" }}
+          options={{ title: "Ordens de Serviço" }}
         />
         <Stack.Screen
           name="OrderDetail"
           component={OrderDetailScreen}
-          options={{ title: "Order Details" }}
+          options={{ title: "Detalhes da Ordem" }}
         />
         <Stack.Screen
           name="OrderForm"
           component={OrderFormScreen}
-          options={{ title: "Order Form" }}
+          options={{ title: "Nova Ordem" }}
         />
       </Stack.Navigator>
     </NavigationContainer>

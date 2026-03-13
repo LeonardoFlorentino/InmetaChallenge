@@ -11,6 +11,7 @@ export type WorkOrder = {
   deletedAt?: string;
   completed: boolean;
   deleted: boolean;
+  synced?: boolean;
 };
 
 export const getWorkOrders = async (): Promise<WorkOrder[]> => {
@@ -45,7 +46,7 @@ export const deleteWorkOrder = async (id: string): Promise<void> => {
   await api.delete(`/work-orders/${id}`);
 };
 
-export const syncWorkOrders = async (since: string) => {
-  const { data } = await api.get(`/work-orders/sync`, { params: { since } });
+export const syncWorkOrders = async (since: string): Promise<WorkOrder[]> => {
+  const { data } = await api.get<WorkOrder[]>(`/work-orders/sync`, { params: { since } });
   return data;
 };

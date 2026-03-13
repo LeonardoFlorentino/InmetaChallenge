@@ -1,14 +1,20 @@
 import React, { useState } from "react";
+import { Platform } from "react-native";
 import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-} from "react-native";
+  Container,
+  Card,
+  Title,
+  Label,
+  StatusRow,
+  StatusButton,
+  StatusText,
+  OnlineStatus,
+  OnlineStatusText
+} from "./OrderFormForm.styles";
+import Button from "../../components/Button";
+import { Input } from "../../components/Input";
+import { KeyboardAvoidingView } from "react-native";
+import { ScrollView } from "react-native";
 import { useNetworkStatus } from "../../hooks/useNetworkStatus";
 import { useTheme } from "../../styles/ThemeProvider";
 import { useUser } from "../../store/UserContext";
@@ -38,101 +44,56 @@ import { useUser } from "../../store/UserContext";
       setStatus("Pending");
     };
 
-    // Cores do tema
-    const isDark = theme.background === "#181818" || theme.text === "#fff";
-    // Cores fixas InMeta
-    const green = "#2d9267";
-    const orange = "#e35225";
-    const cardColor = isDark ? theme.card : "#fff";
-    const borderColor = green;
-    const labelColor = green;
-    const titleColor = orange;
-    const inputTextColor = isDark ? "#fff" : "#222";
-    const inputBgColor = isDark ? "#232323" : "#f7f7f7";
-    const placeholderColor = isDark ? "#bbb" : "#888";
-    const statusActiveColor = green;
-    const statusInactiveColor = isDark ? theme.card : "#f7f7f7";
-    const statusActiveText = "#fff";
-    const statusInactiveText = "#888";
-    const saveButtonColor = orange;
-    const saveButtonTextColor = "#fff";
     return (
-      <View style={{ flex: 1, backgroundColor: theme.background }}>
+      <Container>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : undefined}
         >
-          <ScrollView contentContainerStyle={{
-            backgroundColor: cardColor,
-            padding: 28,
-            margin: 20,
-            borderRadius: 18,
-            elevation: 4,
-            shadowColor: "#000",
-            shadowOpacity: 0.08,
-            shadowRadius: 12,
-            shadowOffset: { width: 0, height: 4 },
-            alignItems: "stretch"
-          }}>
-            <Text style={{ fontSize: 26, fontWeight: "bold", color: titleColor, marginBottom: 18, textAlign: "center" }}>Nova Ordem de Serviço</Text>
-            <Text style={{ color: labelColor, fontWeight: "bold", marginTop: 16, marginBottom: 6, fontSize: 16 }}>Título</Text>
-            <TextInput
-              style={{ borderWidth: 1.5, borderColor, borderRadius: 10, padding: 12, fontSize: 16, backgroundColor: inputBgColor, color: inputTextColor }}
+          <Card>
+            <Title>Nova Ordem de Serviço</Title>
+            <Label>Título</Label>
+            <Input
               value={title}
               onChangeText={setTitle}
               placeholder="Título da ordem"
-              placeholderTextColor={placeholderColor}
             />
-            <Text style={{ color: labelColor, fontWeight: "bold", marginTop: 16, marginBottom: 6, fontSize: 16 }}>Descrição</Text>
-            <TextInput
-              style={{ borderWidth: 1.5, borderColor, borderRadius: 10, padding: 12, fontSize: 16, backgroundColor: inputBgColor, color: inputTextColor, minHeight: 80 }}
+            <Label>Descrição</Label>
+            <Input
               value={description}
               onChangeText={setDescription}
               placeholder="Descreva a ordem de serviço"
-              placeholderTextColor={placeholderColor}
               multiline
             />
-            <Text style={{ color: labelColor, fontWeight: "bold", marginTop: 16, marginBottom: 6, fontSize: 16 }}>Responsável</Text>
-            <TextInput
-              style={{ borderWidth: 1.5, borderColor, borderRadius: 10, padding: 12, fontSize: 16, backgroundColor: inputBgColor, color: inputTextColor }}
+            <Label>Responsável</Label>
+            <Input
               value={assignedTo}
               onChangeText={setAssignedTo}
               placeholder="Seu nome"
-              placeholderTextColor={placeholderColor}
             />
-            <Text style={{ color: labelColor, fontWeight: "bold", marginTop: 16, marginBottom: 6, fontSize: 16 }}>Status</Text>
-            <View style={{ flexDirection: "row", flexWrap: "wrap", marginTop: 8, marginBottom: 18, gap: 8, justifyContent: "flex-start" }}>
+            <Label>Status</Label>
+            <StatusRow>
               {statuses.map((s) => (
-                <TouchableOpacity
+                <StatusButton
                   key={s}
-                  style={{
-                    borderWidth: 1.5,
-                    borderColor: status === s ? statusActiveColor : "#bbb",
-                    borderRadius: 20,
-                    paddingVertical: 8,
-                    paddingHorizontal: 18,
-                    marginRight: 8,
-                    marginBottom: 8,
-                    backgroundColor: status === s ? statusActiveColor : statusInactiveColor,
-                    maxWidth: 140,
-                  }}
+                  active={status === s}
                   onPress={() => setStatus(s)}
                 >
-                  <Text style={{ color: status === s ? statusActiveText : statusInactiveText, fontWeight: "bold" }}>{s}</Text>
-                </TouchableOpacity>
+                  <StatusText active={status === s}>{s}</StatusText>
+                </StatusButton>
               ))}
-            </View>
-            <TouchableOpacity style={{ backgroundColor: saveButtonColor, paddingVertical: 16, borderRadius: 12, alignItems: "center", marginTop: 18, shadowColor: saveButtonColor, shadowOpacity: 0.15, shadowRadius: 8, shadowOffset: { width: 0, height: 2 } }} onPress={handleSubmit}>
-              <Text style={{ color: saveButtonTextColor, fontSize: 18, fontWeight: "bold", letterSpacing: 1 }}>Salvar Ordem</Text>
-            </TouchableOpacity>
-          </ScrollView>
+            </StatusRow>
+            <Button onPress={handleSubmit} enabled={!!title && !!description && !!assignedTo}>
+              Salvar Ordem
+            </Button>
+          </Card>
         </KeyboardAvoidingView>
-        <View style={{ position: "absolute", left: 0, right: 0, bottom: 0, alignItems: "center", padding: 8 }}>
-          <Text style={{ color: isOnline ? green : orange }}>
+        <OnlineStatus>
+          <OnlineStatusText online={isOnline}>
             {isOnline ? "Online" : "Offline"}
-          </Text>
-        </View>
-      </View>
+          </OnlineStatusText>
+        </OnlineStatus>
+      </Container>
     );
   };
 

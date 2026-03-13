@@ -18,11 +18,22 @@ export const getLocalOrders = async (): Promise<WorkOrder[]> => {
 };
 
 // Função para salvar ordens localmente
+import { BSON, UpdateMode } from "realm";
+
 export const saveLocalOrders = async (orders: WorkOrder[]) => {
 	const realm = await getRealm();
 	realm.write(() => {
 		orders.forEach((order) => {
-			realm.create("Order", order, "modified");
+			// Buscar registro existente pelo id
+			const existing = realm.objects("Order").filtered("id == $0", order.id)[0];
+			const _id: BSON.ObjectId = (existing && existing._id instanceof BSON.ObjectId)
+				? existing._id
+				: new BSON.ObjectId();
+			realm.create(
+				"Order",
+				{ ...order, _id } as any,
+				UpdateMode.Modified
+			);
 		});
 	});
 };
@@ -50,7 +61,16 @@ export const syncOrders = async () => {
 			// Marcar como sincronizado localmente
 			const realm = await getRealm();
 			realm.write(() => {
-				realm.create("Order", { ...order, synced: true }, "modified");
+				// Buscar registro existente pelo id
+				const existing = realm.objects("Order").filtered("id == $0", order.id)[0];
+				const _id: BSON.ObjectId = (existing && existing._id instanceof BSON.ObjectId)
+					? existing._id
+					: new BSON.ObjectId();
+				realm.create(
+					"Order",
+					{ ...order, synced: true, _id } as any,
+					UpdateMode.Modified
+				);
 			});
 		}
 
