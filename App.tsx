@@ -3,6 +3,7 @@ import AppNavigator from "./src/navigation";
 import { ThemeProvider } from "./src/styles/ThemeProvider";
 import { useNetworkStatus } from "./src/hooks/useNetworkStatus";
 import { syncOrders } from "./src/services/sync";
+import { UserProvider } from "./src/store/UserContext";
 
 export default function App() {
   const isOnline = useNetworkStatus();
@@ -17,8 +18,10 @@ export default function App() {
   }, [isOnline]);
 
   return (
-    <ThemeProvider initialMode="dark">
-      <AppNavigator />
-    </ThemeProvider>
+    <UserProvider>
+      <ThemeProvider initialMode="dark">
+        <AppNavigator />
+      </ThemeProvider>
+    </UserProvider>
   );
 }

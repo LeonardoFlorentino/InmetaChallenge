@@ -7,187 +7,135 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
 } from "react-native";
 import { useNetworkStatus } from "../../hooks/useNetworkStatus";
 import { useTheme } from "../../styles/ThemeProvider";
-import { typography } from "../../styles/typography";
+import { useUser } from "../../store/UserContext";
 
-const statuses = ["Pending", "In Progress", "Completed"] as const;
+  const statuses = ["Pending", "In Progress", "Completed"] as const;
 
-const OrderFormScreen = () => {
-  const { theme } = useTheme();
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [assignedTo, setAssignedTo] = useState("");
-  const [status, setStatus] = useState<(typeof statuses)[number]>("Pending");
-  const isOnline = useNetworkStatus();
-  const [showForm, setShowForm] = useState(false);
+  const OrderFormScreen = () => {
+    const { theme } = useTheme();
+    const { name } = useUser();
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [assignedTo, setAssignedTo] = useState(name);
+    const [status, setStatus] = useState<(typeof statuses)[number]>("Pending");
+    const isOnline = useNetworkStatus();
+    // Removido showForm: o formulário será exibido sempre
 
-  const handleSubmit = () => {
-    // Aqui você pode implementar a lógica de salvar localmente (Realm) ou online
-    // Exemplo: chamar função de store ou serviço
-    setShowForm(false);
-    setTitle("");
-    setDescription("");
-    setAssignedTo("");
-    setStatus("Pending");
-  };
+    // Sempre sincroniza o nome do usuário salvo no contexto ao abrir o formulário
+    React.useEffect(() => {
+      setAssignedTo(name);
+    }, [name]);
 
-  return (
-    <View style={{ flex: 1, backgroundColor: theme.background }}>
-      {showForm && (
+    const handleSubmit = () => {
+      // Salvar ordem (implementar integração)
+      setTitle("");
+      setDescription("");
+      setAssignedTo(name);
+      setStatus("Pending");
+    };
+
+    // Cores do tema
+    const isDark = theme.background === "#181818" || theme.text === "#fff";
+    // Cores fixas InMeta
+    const green = "#2d9267";
+    const orange = "#e35225";
+    const cardColor = isDark ? theme.card : "#fff";
+    const borderColor = green;
+    const labelColor = green;
+    const titleColor = orange;
+    const inputTextColor = isDark ? "#fff" : "#222";
+    const inputBgColor = isDark ? "#232323" : "#f7f7f7";
+    const placeholderColor = isDark ? "#bbb" : "#888";
+    const statusActiveColor = green;
+    const statusInactiveColor = isDark ? theme.card : "#f7f7f7";
+    const statusActiveText = "#fff";
+    const statusInactiveText = "#888";
+    const saveButtonColor = orange;
+    const saveButtonTextColor = "#fff";
+    return (
+      <View style={{ flex: 1, backgroundColor: theme.background }}>
         <KeyboardAvoidingView
-          style={styles.formContainer}
+          style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : undefined}
         >
-          <Text style={styles.label}>Title</Text>
-          <TextInput
-            style={styles.input}
-            value={title}
-            onChangeText={setTitle}
-            placeholder="Title"
-          />
-          <Text style={styles.label}>Description</Text>
-          <TextInput
-            style={styles.input}
-            value={description}
-            onChangeText={setDescription}
-            placeholder="Description"
-            multiline
-          />
-          <Text style={styles.label}>Assigned To</Text>
-          <TextInput
-            style={styles.input}
-            value={assignedTo}
-            onChangeText={setAssignedTo}
-            placeholder="Technician Name"
-          />
-          <Text style={styles.label}>Status</Text>
-          <View style={styles.statusRow}>
-            {statuses.map((s) => (
-              <TouchableOpacity
-                key={s}
-                style={[
-                  styles.statusButton,
-                  status === s && styles.statusButtonActive,
-                ]}
-                onPress={() => setStatus(s)}
-              >
-                <Text
-                  style={
-                    status === s ? styles.statusTextActive : styles.statusText
-                  }
+          <ScrollView contentContainerStyle={{
+            backgroundColor: cardColor,
+            padding: 28,
+            margin: 20,
+            borderRadius: 18,
+            elevation: 4,
+            shadowColor: "#000",
+            shadowOpacity: 0.08,
+            shadowRadius: 12,
+            shadowOffset: { width: 0, height: 4 },
+            alignItems: "stretch"
+          }}>
+            <Text style={{ fontSize: 26, fontWeight: "bold", color: titleColor, marginBottom: 18, textAlign: "center" }}>Nova Ordem de Serviço</Text>
+            <Text style={{ color: labelColor, fontWeight: "bold", marginTop: 16, marginBottom: 6, fontSize: 16 }}>Título</Text>
+            <TextInput
+              style={{ borderWidth: 1.5, borderColor, borderRadius: 10, padding: 12, fontSize: 16, backgroundColor: inputBgColor, color: inputTextColor }}
+              value={title}
+              onChangeText={setTitle}
+              placeholder="Título da ordem"
+              placeholderTextColor={placeholderColor}
+            />
+            <Text style={{ color: labelColor, fontWeight: "bold", marginTop: 16, marginBottom: 6, fontSize: 16 }}>Descrição</Text>
+            <TextInput
+              style={{ borderWidth: 1.5, borderColor, borderRadius: 10, padding: 12, fontSize: 16, backgroundColor: inputBgColor, color: inputTextColor, minHeight: 80 }}
+              value={description}
+              onChangeText={setDescription}
+              placeholder="Descreva a ordem de serviço"
+              placeholderTextColor={placeholderColor}
+              multiline
+            />
+            <Text style={{ color: labelColor, fontWeight: "bold", marginTop: 16, marginBottom: 6, fontSize: 16 }}>Responsável</Text>
+            <TextInput
+              style={{ borderWidth: 1.5, borderColor, borderRadius: 10, padding: 12, fontSize: 16, backgroundColor: inputBgColor, color: inputTextColor }}
+              value={assignedTo}
+              onChangeText={setAssignedTo}
+              placeholder="Seu nome"
+              placeholderTextColor={placeholderColor}
+            />
+            <Text style={{ color: labelColor, fontWeight: "bold", marginTop: 16, marginBottom: 6, fontSize: 16 }}>Status</Text>
+            <View style={{ flexDirection: "row", flexWrap: "wrap", marginTop: 8, marginBottom: 18, gap: 8, justifyContent: "flex-start" }}>
+              {statuses.map((s) => (
+                <TouchableOpacity
+                  key={s}
+                  style={{
+                    borderWidth: 1.5,
+                    borderColor: status === s ? statusActiveColor : "#bbb",
+                    borderRadius: 20,
+                    paddingVertical: 8,
+                    paddingHorizontal: 18,
+                    marginRight: 8,
+                    marginBottom: 8,
+                    backgroundColor: status === s ? statusActiveColor : statusInactiveColor,
+                    maxWidth: 140,
+                  }}
+                  onPress={() => setStatus(s)}
                 >
-                  {s}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-          <TouchableOpacity style={styles.saveButton} onPress={handleSubmit}>
-            <Text style={styles.saveButtonText}>Save</Text>
-          </TouchableOpacity>
+                  <Text style={{ color: status === s ? statusActiveText : statusInactiveText, fontWeight: "bold" }}>{s}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <TouchableOpacity style={{ backgroundColor: saveButtonColor, paddingVertical: 16, borderRadius: 12, alignItems: "center", marginTop: 18, shadowColor: saveButtonColor, shadowOpacity: 0.15, shadowRadius: 8, shadowOffset: { width: 0, height: 2 } }} onPress={handleSubmit}>
+              <Text style={{ color: saveButtonTextColor, fontSize: 18, fontWeight: "bold", letterSpacing: 1 }}>Salvar Ordem</Text>
+            </TouchableOpacity>
+          </ScrollView>
         </KeyboardAvoidingView>
-      )}
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => setShowForm((v) => !v)}
-        accessibilityLabel="Add Work Order"
-      >
-        <Text style={styles.fabText}>+</Text>
-      </TouchableOpacity>
-      <View style={styles.statusBar}>
-        <Text style={{ color: isOnline ? "green" : "red" }}>
-          {isOnline ? "Online" : "Offline"}
-        </Text>
+        <View style={{ position: "absolute", left: 0, right: 0, bottom: 0, alignItems: "center", padding: 8 }}>
+          <Text style={{ color: isOnline ? green : orange }}>
+            {isOnline ? "Online" : "Offline"}
+          </Text>
+        </View>
       </View>
-    </View>
-  );
-};
+    );
+  };
 
-const styles = StyleSheet.create({
-  formContainer: {
-    backgroundColor: "#fff",
-    padding: 20,
-    margin: 20,
-    borderRadius: 12,
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-  },
-  label: {
-    marginTop: 10,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 6,
-    padding: 8,
-    marginTop: 4,
-    marginBottom: 8,
-  },
-  statusRow: {
-    flexDirection: "row",
-    marginBottom: 12,
-  },
-  statusButton: {
-    padding: 8,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    marginRight: 8,
-  },
-  statusButtonActive: {
-    backgroundColor: "#007bff",
-    borderColor: "#007bff",
-  },
-  statusText: {
-    color: "#333",
-  },
-  statusTextActive: {
-    color: "#fff",
-  },
-  saveButton: {
-    backgroundColor: "#28a745",
-    padding: 12,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 10,
-  },
-  saveButtonText: {
-    color: "#fff",
-    fontSize: 16,
-  },
-  fab: {
-    position: "absolute",
-    right: 24,
-    bottom: 24,
-    backgroundColor: "#007bff",
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    alignItems: "center",
-    justifyContent: "center",
-    elevation: 6,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-  },
-  fabText: {
-    color: "#fff",
-    fontSize: 32,
-    marginTop: -2,
-  },
-  statusBar: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
-    alignItems: "center",
-    padding: 8,
-  },
-});
+  // O objeto styles não é mais necessário, pois todos os estilos são definidos inline acima
 
-export default OrderFormScreen;
+  export default OrderFormScreen;
