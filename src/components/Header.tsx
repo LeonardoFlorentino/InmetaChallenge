@@ -23,7 +23,12 @@ const Header: React.FC<HeaderProps> = ({ navigation, showBack = true }) => {
       {showBack && (
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.canGoBack && navigation.canGoBack() ? navigation.goBack() : navigation.replace('Auth')}
+          onPress={() => {
+            if (navigation.canGoBack && navigation.canGoBack()) {
+              navigation.goBack();
+            }
+            // Se não pode voltar, não faz nada
+          }}
           accessibilityLabel="Voltar"
         >
           <MaterialCommunityIcons name="arrow-left" size={22} color="#fff" />
