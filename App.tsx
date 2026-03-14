@@ -5,6 +5,7 @@ import { ThemeProvider as StyledThemeProvider } from "styled-components/native";
 import { useNetworkStatus } from "./src/hooks/useNetworkStatus";
 import { syncOrders } from "./src/services/sync";
 import { UserProvider } from "./src/store/UserContext";
+import { AuthProvider } from "./src/contexts/AuthProvider";
 
 
 function AppContent() {
@@ -28,10 +29,12 @@ export default function App() {
   }, [isOnline]);
 
   return (
-    <UserProvider>
-      <CustomThemeProvider initialMode="dark">
-        <AppContent />
-      </CustomThemeProvider>
-    </UserProvider>
+    <AuthProvider>
+      <UserProvider>
+        <CustomThemeProvider initialMode="dark">
+          <AppContent />
+        </CustomThemeProvider>
+      </UserProvider>
+    </AuthProvider>
   );
 }
