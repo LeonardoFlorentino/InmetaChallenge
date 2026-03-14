@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import mockUsers from '../mock/users.json';
 
 export type AuthUser = {
   username: string;
@@ -61,11 +62,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   checkAuth: async () => {
     set({ loading: true });
+    // Popular AsyncStorage com mock se não houver usuários
+    const usersRaw = await AsyncStorage.getItem(USERS_KEY);
+    if (!usersRaw) {
+      await AsyncStorage.setItem(USERS_KEY, JSON.stringify(mockUsers));
+    }
     const token = await AsyncStorage.getItem(TOKEN_KEY);
     if (token) {
-      const usersRaw = await AsyncStorage.getItem(USERS_KEY);
-      const users: AuthUser[] = usersRaw ? JSON.parse(usersRaw) : [];
-      // Simples: pega o primeiro usuário logado
+      const usersRaw2 = await AsyncStorage.getItem(USERS_KEY);
+      const users: AuthUser[] = usersRaw2 ? JSON.parse(usersRaw2) : [];
       set({ user: users[0] || null, token, loading: false });
     } else {
       set({ user: null, token: null, loading: false });

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Vigaos",
-    "slug": "Vigaos",
+    "name": "Viagaos",
+    "slug": "Viagaos",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -9,7 +9,9 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#ffffff",
+      "text": "Viagaos",
+      "textSubtitle": "Visualizador Inteligente de Gestão de Atividades e Ordens de Serviço"
     },
     "ios": {
       "supportsTablet": true

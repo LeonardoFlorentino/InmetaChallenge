@@ -20,6 +20,7 @@ import {
 import Button from "../../components/Button";
 import { Input } from "../../components/Input";
 import { useRoute, useNavigation } from "@react-navigation/native";
+import Header from "../../components/Header";
 import { useTheme } from "../../styles/ThemeProvider";
 import { useOrdersStore } from "../../store/ordersStore";
 // Removido import e uso de 'typography' pois estilos são inline
@@ -47,6 +48,7 @@ const OrderDetailScreen = () => {
 
   return (
     <Container>
+      <Header navigation={navigation} showBack={true} />
       {editing ? (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
           <Card>

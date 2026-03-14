@@ -18,6 +18,7 @@ import { ScrollView } from "react-native";
 import { useNetworkStatus } from "../../hooks/useNetworkStatus";
 import { useTheme } from "../../styles/ThemeProvider";
 import { useUser } from "../../store/UserContext";
+import { useFocusEffect } from '@react-navigation/native';
 
   const statuses = ["Pending", "In Progress", "Completed"] as const;
 
@@ -29,12 +30,12 @@ import { useUser } from "../../store/UserContext";
     const [assignedTo, setAssignedTo] = useState(name);
     const [status, setStatus] = useState<(typeof statuses)[number]>("Pending");
     const isOnline = useNetworkStatus();
-    // Removido showForm: o formulário será exibido sempre
 
-    // Sempre sincroniza o nome do usuário salvo no contexto ao abrir o formulário
-    React.useEffect(() => {
-      setAssignedTo(name);
-    }, [name]);
+    useFocusEffect(
+      React.useCallback(() => {
+        setAssignedTo(name);
+      }, [name])
+    );
 
     const handleSubmit = () => {
       // Salvar ordem (implementar integração)

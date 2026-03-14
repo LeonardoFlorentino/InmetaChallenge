@@ -5,7 +5,7 @@ import {
   DarkTheme,
 } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import OrderListScreen from "../screens/OrderListScreen/OrderListScreen";
+import MainScreen from "../screens/MainScreen";
 import OrderDetailScreen from "../screens/OrderDetailScreen/OrderDetailScreen";
 import OrderFormScreen from "../screens/OrderFormScreen/OrderFormScreen";
 import AuthNavigator from "./AuthNavigator";
@@ -35,7 +35,7 @@ const AppNavigator = () => {
     <NavigationContainer theme={navTheme}>
       {user ? (
         <Stack.Navigator
-          initialRouteName="OrderList"
+          initialRouteName="MainScreen"
           screenOptions={{
             headerStyle: { backgroundColor: theme.background },
             headerTitleStyle: {
@@ -47,9 +47,9 @@ const AppNavigator = () => {
           }}
         >
           <Stack.Screen
-            name="OrderList"
-            component={OrderListScreen}
-            options={{ title: "Ordens de Serviço" }}
+            name="MainScreen"
+            component={MainScreen}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="OrderDetail"

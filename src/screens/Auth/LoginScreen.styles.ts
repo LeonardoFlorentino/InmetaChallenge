@@ -6,15 +6,15 @@ import { Dimensions } from 'react-native';
 
 export const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-export const ImageBackground = styled(RNImageBackground)`
-  flex: 1;
-  height: ${() => SCREEN_HEIGHT + 100}px;
-`;
 
 export const Container = styled.View`
   flex: 1;
 `;
 
+export const ImageBackground = styled(RNImageBackground)`
+  flex: 1;
+  height: ${() => SCREEN_HEIGHT + 100}px;
+`;
 
 export const Card = styled.View`
   width: 90%;
