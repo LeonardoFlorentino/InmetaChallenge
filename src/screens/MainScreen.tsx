@@ -8,7 +8,7 @@ import { getWorkOrders, WorkOrder } from "../services/workOrderService";
 import OrderCard from "../components/OrderCard";
 import CenteredButton from "../components/CenteredButton";
 import EmptyOrders from "../components/EmptyOrders";
-import OrderFormScreen from "./OrderFormScreen/OrderFormScreen";
+import ModalOrderScreen from "./ModalOrderScreen/ModalOrderScreen";
 import { Modal } from "react-native";
 
 const MainScreen = ({ navigation }: any) => {
@@ -80,7 +80,7 @@ const MainScreen = ({ navigation }: any) => {
                       onRequestClose={() => setEditOrder(null)}
                       transparent={true}
                     >
-                      <OrderFormScreen
+                      <ModalOrderScreen
                         order={editOrder}
                         onClose={() => setEditOrder(null)}
                       />

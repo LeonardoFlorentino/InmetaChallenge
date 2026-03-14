@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../contexts/AuthProvider';
+import { useUser } from '../../store/UserContext';
 import { Input } from '../../components/Input';
 import {
   Container,
@@ -27,6 +28,7 @@ export default function LoginScreen({ navigation }: any) {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const { login, loading } = useAuth();
+  const { setName } = useUser();
 
   const handleLogin = async () => {
     setError('');
@@ -35,7 +37,11 @@ export default function LoginScreen({ navigation }: any) {
       return;
     }
     const ok = await login(username, password);
-    if (!ok) setError('Usuário ou senha inválidos.');
+    if (ok) {
+      setName(username);
+    } else {
+      setError('Usuário ou senha inválidos.');
+    }
   };
 
   return (

@@ -13,7 +13,7 @@ import {
   OnlineStatus,
   OnlineStatusText,
   ButtonRow
-} from "./OrderFormForm.styles";
+} from "./ModalOrderScreen.styles";
 import Button from "../../components/Button";
 import { Input } from "../../components/Input";
 import { KeyboardAvoidingView } from "react-native";
@@ -23,7 +23,7 @@ import { useTheme } from "../../styles/ThemeProvider";
 import { useUser } from "../../store/UserContext";
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { createWorkOrder, getErrorMessage } from '../../services/workOrderService';
-import { OnlineStatusBadge, OnlineStatusBadgeText } from './OrderFormForm.styles';
+import { OnlineStatusBadge, OnlineStatusBadgeText } from './ModalOrderScreen.styles';
 
 const statuses = [
   { value: "Pending", label: "Pendente" },
@@ -31,12 +31,12 @@ const statuses = [
   { value: "Completed", label: "Concluída" }
 ] as const;
 
-interface OrderFormScreenProps {
+interface ModalOrderScreenProps {
   order?: any;
   onClose?: () => void;
 }
 
-const OrderFormScreen: React.FC<OrderFormScreenProps> = ({ order, onClose }) => {
+const ModalOrderScreen: React.FC<ModalOrderScreenProps> = ({ order, onClose }) => {
   const { theme } = useTheme();
   const { name } = useUser();
   const navigation = useNavigation();
@@ -171,4 +171,4 @@ const OrderFormScreen: React.FC<OrderFormScreenProps> = ({ order, onClose }) => 
   );
 };
 
-export default OrderFormScreen;
+export default ModalOrderScreen;

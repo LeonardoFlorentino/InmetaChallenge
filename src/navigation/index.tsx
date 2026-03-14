@@ -6,8 +6,7 @@ import {
 } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import MainScreen from "../screens/MainScreen";
-import OrderDetailScreen from "../screens/OrderDetailScreen/OrderDetailScreen";
-import OrderFormScreen from "../screens/OrderFormScreen/OrderFormScreen";
+import ModalOrderScreen from "../screens/ModalOrderScreen/ModalOrderScreen";
 import AuthNavigator from "./AuthNavigator";
 import { useAuth } from "../contexts/AuthProvider";
 
@@ -52,13 +51,8 @@ const AppNavigator = () => {
             options={{ headerShown: false }}
           />
           <Stack.Screen
-            name="OrderDetail"
-            component={OrderDetailScreen}
-            options={{ title: "Detalhes da Ordem" }}
-          />
-          <Stack.Screen
             name="OrderForm"
-            component={OrderFormScreen}
+            component={ModalOrderScreen}
             options={{ title: "Nova Ordem" }}
           />
         </Stack.Navigator>
