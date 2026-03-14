@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Platform } from "react-native";
+import { Platform, ActivityIndicator } from "react-native";
+import Toast from 'react-native-root-toast';
 import { KeyboardAvoidingView } from "react-native";
 import { ScrollView } from "react-native";
 import {
@@ -39,11 +40,22 @@ const OrderDetailScreen = () => {
   const [assignedTo, setAssignedTo] = useState(order.assignedTo);
   const [status, setStatus] = useState(order.status);
   const [editing, setEditing] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSave = () => {
-    updateOrder({ ...order, title, description, assignedTo, status, synced: false, updatedAt: new Date().toISOString() });
-    setEditing(false);
-    navigation.goBack();
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      // Simular chamada de API (substitua pelo seu serviço real)
+      await new Promise((resolve) => setTimeout(resolve, 1200));
+      updateOrder({ ...order, title, description, assignedTo, status, synced: false, updatedAt: new Date().toISOString() });
+      Toast.show('Order updated successfully!', { duration: Toast.durations.SHORT, backgroundColor: '#4caf50' });
+      setEditing(false);
+      navigation.goBack();
+    } catch (e) {
+      Toast.show('Failed to update order.', { duration: Toast.durations.SHORT, backgroundColor: '#e53935' });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -58,19 +70,21 @@ const OrderDetailScreen = () => {
               value={title}
               onChangeText={setTitle}
               placeholder="Título da ordem"
+              editable={!loading}
             />
             <Label>Descrição</Label>
             <Input
               value={description}
               onChangeText={setDescription}
-              placeholder="Descreva a ordem de serviço"
-              multiline
+              placeholder="Descrição da ordem"
+              editable={!loading}
             />
             <Label>Responsável</Label>
             <Input
               value={assignedTo}
               onChangeText={setAssignedTo}
-              placeholder="Seu nome"
+              placeholder="Responsável"
+              editable={!loading}
             />
             <Label>Status</Label>
             <StatusRow>
@@ -79,13 +93,14 @@ const OrderDetailScreen = () => {
                   key={s}
                   active={status === s}
                   onPress={() => setStatus(s)}
+                  disabled={loading}
                 >
                   <StatusText active={status === s}>{s}</StatusText>
                 </StatusButton>
               ))}
             </StatusRow>
-            <Button onPress={handleSave} enabled={!!title && !!description && !!assignedTo}>
-              Salvar Ordem
+            <Button onPress={handleSave} enabled={!loading}>
+              {loading ? <ActivityIndicator color="#fff" /> : 'Salvar Alterações'}
             </Button>
           </Card>
         </KeyboardAvoidingView>

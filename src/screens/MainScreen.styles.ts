@@ -22,7 +22,7 @@ export const MainOverlay = styled.View`
 `;
 
 export const CardBox = styled.View`
-  background-color: rgba(30, 30, 30, 0.85);
+  background-color: ${(props) => props.theme.card};
   border-radius: 14px;
   padding: 18px 16px 14px 16px;
   margin-bottom: 14px;
@@ -41,12 +41,12 @@ export const CardBox = styled.View`
 export const CardTitle = styled.Text`
   font-size: 18px;
   font-weight: bold;
-  color: #fff;
+  color: ${(props) => props.theme.title};
   margin-bottom: 4px;
 `;
 
 export const CardText = styled.Text`
-  color: #eee;
+  color: ${(props) => props.theme.text};
   font-size: 14px;
   margin-bottom: 2px;
 `;

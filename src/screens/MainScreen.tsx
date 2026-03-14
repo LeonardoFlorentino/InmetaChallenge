@@ -8,6 +8,8 @@ import { getWorkOrders, WorkOrder } from "../services/workOrderService";
 import OrderCard from "../components/OrderCard";
 import CenteredButton from "../components/CenteredButton";
 import EmptyOrders from "../components/EmptyOrders";
+import OrderFormScreen from "./OrderFormScreen/OrderFormScreen";
+import { Modal } from "react-native";
 
 const MainScreen = ({ navigation }: any) => {
   const { name } = useUser();
@@ -15,6 +17,7 @@ const MainScreen = ({ navigation }: any) => {
   const [orders, setOrders] = useState<WorkOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [editOrder, setEditOrder] = useState<null | WorkOrder>(null);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -36,7 +39,7 @@ const MainScreen = ({ navigation }: any) => {
       {/* Substitua por seu próprio layout de fundo, se necessário */}
       <ImageBackground source={require("../assets/home-background/home.jpg")} resizeMode="cover">
         <MainOverlay>
-          <View style={{ flex: 1, width: '100%', maxWidth: 400, alignSelf: 'center', paddingHorizontal: 24, paddingTop: 32, paddingBottom: 32, justifyContent: 'space-between' }}>
+          <View style={{ flex: 1, width: '100%', maxWidth: 400, alignSelf: 'center', paddingHorizontal: 24, paddingTop: 60, paddingBottom: 32, justifyContent: 'space-between' }}>
             <View style={{ marginTop: 48 }}>
               <CardTitle style={{ color: '#ff6a2b', textAlign: 'center', fontWeight: 'bold', fontSize: 26, marginBottom: 8 }}>Bem-vindo ao Viagaos!</CardTitle>
               <CardText style={{ color: '#6ad1b8', textAlign: 'center', fontWeight: 'bold', marginBottom: 8, fontSize: 18 }}>
@@ -52,23 +55,38 @@ const MainScreen = ({ navigation }: any) => {
               ) : error ? (
                 <CardText style={{ color: '#fff', textAlign: 'center' }}>{error}</CardText>
               ) : (
-                <FlatList
-                  data={orders}
-                  keyExtractor={(item) => item.id}
-                  renderItem={({ item }) => (
-                    <OrderCard
-                      order={item}
-                      onPress={() => navigation.navigate("OrderDetail", { order: item })}
-                    />
+                <>
+                  <FlatList
+                    data={orders}
+                    keyExtractor={(item) => item.id}
+                    renderItem={({ item }) => (
+                      <OrderCard
+                        order={item}
+                        onPress={() => setEditOrder(item)}
+                      />
+                    )}
+                    ListEmptyComponent={() => (
+                      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', minHeight: 220 }}>
+                        <EmptyOrders />
+                      </View>
+                    )}
+                    contentContainerStyle={orders.length === 0 ? { flex: 1 } : undefined}
+                    style={{ width: '100%', marginBottom: 60, marginTop: 20 }}
+                  />
+                  {editOrder && (
+                    <Modal
+                      visible={!!editOrder}
+                      animationType="slide"
+                      onRequestClose={() => setEditOrder(null)}
+                      transparent={true}
+                    >
+                      <OrderFormScreen
+                        order={editOrder}
+                        onClose={() => setEditOrder(null)}
+                      />
+                    </Modal>
                   )}
-                  ListEmptyComponent={() => (
-                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', minHeight: 220 }}>
-                      <EmptyOrders />
-                    </View>
-                  )}
-                  contentContainerStyle={orders.length === 0 ? { flex: 1 } : undefined}
-                  style={{ width: '100%', marginBottom: 60 }}
-                />
+                </>
               )}
             </View>
             <View style={{ marginTop: 24 }}>

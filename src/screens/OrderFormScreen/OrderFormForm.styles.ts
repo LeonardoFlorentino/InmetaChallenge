@@ -101,3 +101,25 @@ export const OnlineStatus = styled.View`
 export const OnlineStatusText = styled.Text<{online: boolean}>`
   color: ${(props) => (props.online ? '#2d9267' : '#e35225')};
 `;
+
+export const OnlineStatusBadge = styled.View<{online: boolean}>`
+  align-self: center;
+  margin-vertical: 8px;
+  padding-vertical: 6px;
+  padding-horizontal: 18px;
+  border-radius: 16px;
+  background-color: ${(props) => (props.online ? '#2d9267' : '#e35225')};
+`;
+
+export const OnlineStatusBadgeText = styled.Text`
+  color: #fff;
+  font-weight: bold;
+  font-size: 15px;
+`;
+
+export const ButtonRow = styled.View`
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-top: 24px;
+  gap: 12px;
+`;

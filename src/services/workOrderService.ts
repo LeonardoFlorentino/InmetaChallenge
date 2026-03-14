@@ -50,3 +50,10 @@ export const syncWorkOrders = async (since: string): Promise<WorkOrder[]> => {
   const { data } = await api.get<WorkOrder[]>(`/work-orders/sync`, { params: { since } });
   return data;
 };
+
+export function getErrorMessage(error: any): string {
+  if (error?.response?.data?.message) return error.response.data.message;
+  if (error?.response?.data?.error) return error.response.data.error;
+  if (error?.message) return error.message;
+  return "Unknown error occurred.";
+}

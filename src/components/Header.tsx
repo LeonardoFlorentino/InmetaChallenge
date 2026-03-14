@@ -3,6 +3,9 @@ import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from "../styles/ThemeProvider";
 import { StatusBar, Platform } from "react-native";
+import { useAuth } from '../contexts/AuthProvider';
+import { useNetworkStatus } from '../hooks/useNetworkStatus';
+import { Text } from 'react-native';
 
 interface HeaderProps {
   navigation: any;
@@ -11,6 +14,8 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ navigation, showBack = true }) => {
   const { mode, setMode } = useTheme();
+  const { logout } = useAuth();
+  const isOnline = useNetworkStatus();
   React.useEffect(() => {
     StatusBar.setBarStyle(mode === 'dark' ? 'light-content' : 'dark-content');
     if (Platform.OS === 'android') {
@@ -23,18 +28,32 @@ const Header: React.FC<HeaderProps> = ({ navigation, showBack = true }) => {
       {showBack && (
         <TouchableOpacity
           style={styles.button}
-          onPress={() => {
+          onPress={async () => {
             if (navigation.canGoBack && navigation.canGoBack()) {
               navigation.goBack();
+            } else {
+              await logout();
             }
-            // Se não pode voltar, não faz nada
           }}
           accessibilityLabel="Voltar"
         >
           <MaterialCommunityIcons name="arrow-left" size={22} color="#fff" />
         </TouchableOpacity>
       )}
-      <View style={{ flex: 1 }} />
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <View style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          backgroundColor: isOnline ? 'rgba(45,146,103,0.92)' : 'rgba(227,82,37,0.45)',
+          borderRadius: 16,
+          paddingVertical: 6,
+          paddingHorizontal: 18,
+          alignSelf: 'center',
+        }}>
+          <MaterialCommunityIcons name={isOnline ? 'wifi' : 'wifi-off'} size={22} color="#fff" style={{ marginRight: 8 }} />
+          <HeaderStatusText>{isOnline ? 'Online' : 'Offline'}</HeaderStatusText>
+        </View>
+      </View>
       <TouchableOpacity
         style={styles.button}
         onPress={() => setMode(mode === 'dark' ? 'light' : 'dark')}
@@ -49,6 +68,10 @@ const Header: React.FC<HeaderProps> = ({ navigation, showBack = true }) => {
     </View>
   );
 };
+
+const HeaderStatusText = ({ children }: { children: React.ReactNode }) => (
+  <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 15, textAlign: 'center', marginLeft: 4 }}>{children}</Text>
+);
 
 const styles = StyleSheet.create({
   header: {
